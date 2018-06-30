@@ -7,6 +7,7 @@
 
 
 #include <iostream>
+#include "type.h"
 #include "b_plus_tree.h"
 namespace CatalogManager {
     class CatalogManager{
@@ -17,34 +18,34 @@ namespace CatalogManager {
 
 
 namespace IndexManager{
-    enum rua {
-        INT,FLOAT,CHAR
-    };
-    class singleAttr{
-    public:
-        std::string attrname;
-        rua type;
-        int length;
-    };
-    union ourType {
-        int intData;
-        float floatData;
-        char charData;
-    };
-
+    
+    
+    
     class IndexManager {
     public:
         IndexManager();
         ~IndexManager();
-        int createIndex(std::string name, singleAttr attr);
-        void setName(std::string name);
-        void deleteMany();
-        void deleteOne();
-        int insert(ourType key, addressType data);
-        vector<addressType> search(ourType key, int searchType);
+        int createIndex(std::string name, rua type);
+        void setName(std::string name, std::string attr);
+        //void deleteMany();
+        int Delete(int key);
+		int Delete(std::string key);
+		int Delete(float key);
+		int Insert(int key, addressType data);
+		int Insert(std::string key , addressType data);
+		int Insert(float key, addressType data);
+		std::vector<addressType> Search(int key, int searchType);
+		std::vector<addressType> Search(float key, int searchType);
+		std::vector<addressType> Search(std::string key, int searchType);
 
     private:
-        void *currentMemory;
+		void *currentMemory;
+		rua bPlusTreeType;
+		std::string attrName;
+		BPlusTree<BPlusNodeInt, IntKey> *bPlusTreeInt;
+		BPlusTree<BPlusNodeChar, CharKey> *bPlusTreeChar;
+		BPlusTree<BPlusNodeFloat, FloatKey> *bPlusTreeFloat;
+        
         int currentMemorySize;
         rua currentType;
         std::string currentIndexName;
@@ -52,94 +53,6 @@ namespace IndexManager{
     };
 
 
-    IndexManager::IndexManager(CatalogManager *catalogManager, BufferManager* bufferManager) {
-
-    }
-    void IndexManager::switchIndex(std::string name);
-    void IndexManager::setName(std::string name) {
-        currentIndexName = name;
-    }
-
-    int IndexManager::createIndex(std::string name, singleAttr attr){
-        saveIndexFileCatalog(name, name+".index");
-        switch(attr.type){
-            case INT:
-                BPlusTree<BPlusNodeInt,IntKey> bPlusTree = BPlusTree<BPlusNodeInt,IntKey>(currentMemory);
-                break;
-            case CHAR:
-                BPlusTree<BPlusNodeChar,CharKey> bPlusTree = BPlusTree<BPlusNodeChar,CharKey>(currentMemory);
-                break;
-            case FLOAT:
-                BPlusTree<BPlusNodeFloat,FloatKey> bPlusTree = BPlusTree<BPlusNodeFloat,FloatKey>(currentMemory);
-                break;
-        }
-    }
-
-    int IndexManager::insert(ourType key, addressType data) {
-
-        switch(currentType){
-            case INT:
-                BPlusTree<BPlusNodeInt,IntKey> bPlusTree = BPlusTree<BPlusNodeInt,IntKey>(currentMemory);
-                IntKey keyStructure;
-                break;
-            case CHAR:
-                BPlusTree<BPlusNodeChar,CharKey> bPlusTree = BPlusTree<BPlusNodeChar,CharKey>(currentMemory);
-                CharKey keyStructure;
-                break;
-            case FLOAT:
-                BPlusTree<BPlusNodeFloat,FloatKey> bPlusTree = BPlusTree<BPlusNodeFloat,FloatKey>(currentMemory);
-                FloatKey keyStructure;
-                break;
-        }
-        keyStruture = key;
-        keyStruture.data = data;
-        return  bPlusTree.insert(keyStructure);
-    }
-
-    int IndexManager::deleteOne(ourType key) {
-
-        switch(currentType){
-            case INT:
-                BPlusTree<BPlusNodeInt,IntKey> bPlusTree = BPlusTree<BPlusNodeInt,IntKey>(currentMemory);
-                IntKey keyStructure;
-                break;
-            case CHAR:
-                BPlusTree<BPlusNodeChar,CharKey> bPlusTree = BPlusTree<BPlusNodeChar,CharKey>(currentMemory);
-                CharKey keyStructure;
-                break;
-            case FLOAT:
-                BPlusTree<BPlusNodeFloat,FloatKey> bPlusTree = BPlusTree<BPlusNodeFloat,FloatKey>(currentMemory);
-                FloatKey keyStructure;
-                break;
-        }
-        keyStruture = key;
-        keyStruture.data = data;
-        return bPlusTree.remove(keyStructure);
-    }
-    vector<addressType> search(ourType key, int searchType){
-        switch(currentType){
-            case INT:
-                BPlusTree<BPlusNodeInt,IntKey> bPlusTree = BPlusTree<BPlusNodeInt,IntKey>(currentMemory);
-                IntKey keyStructure;
-                break;
-            case CHAR:
-                BPlusTree<BPlusNodeChar,CharKey> bPlusTree = BPlusTree<BPlusNodeChar,CharKey>(currentMemory);
-                CharKey keyStructure;
-                break;
-            case FLOAT:
-                BPlusTree<BPlusNodeFloat,FloatKey> bPlusTree = BPlusTree<BPlusNodeFloat,FloatKey>(currentMemory);
-                FloatKey keyStructure;
-                break;
-        }
-        keyStructure = key;
-        keyStructure.data = data;
-        keyStructure.type = searchType;
-        return bPlusTree.searchNodes(keyStructure);
-    }
-
-    void IndexManager::saveIndexFileCatalog(std::string indexName, std::string indexFile) {
-        ;
-    }
 
 }
 

@@ -133,6 +133,7 @@ namespace IndexManager {
     template <class T, class KeyType>
     class BPlusTree :public Tree<T,KeyType> {
     public:
+		int initNewTree();
         bool removeKey(KeyType key);
         bool adjustAfterRemove(T pNode);
         BPlusTree(void *memory);
@@ -199,10 +200,12 @@ namespace IndexManager {
         logger =  Logger();
         logger.info(metaData.msg);
         nextPointer = maxChildrenNum + 1;
+		rootPosition = metaData.rootPosition;
     }
 
     template <class T, class KeyType>
     BPlusTree< T, KeyType>::~BPlusTree() {
+		memcpy(memoryAddress, &metaData, sizeof(MetaData));
         std::cout << "B plus tree is cleaned.";
     }
 
@@ -305,6 +308,16 @@ namespace IndexManager {
         }
 
     };
+	template <class T, class KeyType>
+	int BPlusTree< T, KeyType>::initNewTree() {
+		metaData.num = 0;
+		for (int i = 0; i < MAX_NODE_NUM; i++) {
+			metaData.nodeMemoryTable.used[i] = false;
+		}
+		metaData.num = 0;
+		memcpy(memoryAddress, &metaData, sizeof(MetaData));
+	}
+
 
     template <class T, class KeyType>
     void BPlusTree< T,  KeyType>::emptyTree() {
@@ -330,7 +343,8 @@ namespace IndexManager {
             root.pointers[0] = key.data;
             root.pointers[nextPointer] = -1;
             writeBPlusNode(rootPosition,root);
-            metaData.num++;
+            //metaData.num++;
+			memcpy(memoryAddress, &metaData, sizeof(MetaData));
             return true;
         }
 
@@ -439,7 +453,9 @@ namespace IndexManager {
             writeBPlusNode(newRootPosition,newRoot);
             writeBPlusNode(rootPosition,currentNode);
             rootPosition = newRootPosition;
+			metaData.rootPosition = rootPosition;
         }
+		memcpy(memoryAddress, &metaData, sizeof(MetaData));
         return true;
 
 
@@ -464,7 +480,7 @@ namespace IndexManager {
             std::cout << "you are getting " << address << std::endl;
         }
         auto myOffset = address * nodeSize + nodesOffset;
-        auto myAddress = (T*)(myOffset + memoryAddress);
+        auto myAddress = (T*)(myOffset + (char*)memoryAddress);
         memcpy(bPlusNode,myAddress,nodeSize);
         return 1;
 //        bPlusNode =
@@ -480,16 +496,18 @@ namespace IndexManager {
     template <class T, class KeyType>
     int BPlusTree<T, KeyType>::writeBPlusNode(int address, T *bPlusNode) {
         auto myOffset = address * nodeSize + nodesOffset;
-        auto myAddress = (T*)(myOffset + memoryAddress);
+        auto myAddress = (T*)(myOffset + (char*)memoryAddress);
         memcpy(myAddress,bPlusNode,nodeSize);
+		memcpy(memoryAddress, &metaData, sizeof(MetaData));
         return 1;
     }
 
     template <class T, class KeyType>
     int BPlusTree<T, KeyType>::writeBPlusNode(int address, T bPlusNode) {
         auto myOffset = address * nodeSize + nodesOffset;
-        auto myAddress = (T*)(myOffset + memoryAddress);
+        auto myAddress = (T*)(myOffset + (char*)memoryAddress);
         memcpy(myAddress,&bPlusNode,nodeSize);
+		memcpy(memoryAddress, &metaData, sizeof(MetaData));
         return 1;
     }
 
@@ -780,6 +798,7 @@ namespace IndexManager {
 //    void BPlusTree<T,KeyType>::clearNode(addressType node){
 //    }
 
+
     template <class T, class KeyType>
     int BPlusTree<T,KeyType>::createBPlusNode(){
         int firstMatch = -1;
@@ -793,6 +812,7 @@ namespace IndexManager {
         }
         if(flag){
             metaData.nodeMemoryTable.used[firstMatch]  = true;
+			metaData.num++;
             return firstMatch;
         }else{
             return -1;
@@ -821,7 +841,7 @@ namespace IndexManager {
     };
     template< class T, class KeyType>
     T BPlusTree<T,KeyType>::findNode(KeyType target) {
-        return recursiveFindNode(target,rootPosition);
+        return recursiveFindNode(target,metaData.rootPosition);
     }
 
     template< class T, class KeyType>
@@ -1021,7 +1041,7 @@ namespace IndexManager {
             flag = 1;
             for(int i = 0; i < last->numOfKey; i++){
                 if(flag == 1){
-                    found.push_back(first->pointers[i]);
+                    found.push_back(last->pointers[i]);
                 }
                 if(flag == 1){
                     if(lastKey.key == last->key[i]){
@@ -1065,7 +1085,7 @@ namespace IndexManager {
                     }
                 }
                 if(flag == 1){
-                    found.push_back(first->pointers[i]);
+                    found.push_back(last->pointers[i]);
                 }
             }
         }else if(traversalType == include_last){
@@ -1287,7 +1307,7 @@ namespace IndexManager {
         rightChild->pointers[0] = leftChild->pointers[leftChild->numOfKey];
         rightChild->numOfKey++;
 
-        father->key[splitKey] = leftChild->key[leftChild->key[leftChild->numOfKey - 1]];
+        father->key[splitKey] = leftChild->key[leftChild->numOfKey - 1];
         leftChild->numOfKey--;
 
         writeBPlusNode(fatherAddress, father);

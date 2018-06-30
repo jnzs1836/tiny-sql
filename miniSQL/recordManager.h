@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iomanip>
 #include "type.h"
+#include "index_manager.h"
 using namespace std;
 
 //测试用头文件，里面是假装的接口
@@ -167,7 +168,7 @@ private:
 	*/
 	void outputSelect(dat *block, attrMine atr, int cnt);
 
-	IndexManager im;
+	IndexManager::IndexManager im;
 };
 
 #endif

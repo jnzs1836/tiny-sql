@@ -77,6 +77,7 @@ void giveIndex(string name, int num)
 	it->second.hasIndex[num] = 1;
 }
 
+/*
 //¼ÙµÄIndexManager
 void IndexManager::setName(string str, string attr) 
 {
@@ -84,3 +85,4 @@ void IndexManager::setName(string str, string attr)
 	cout << "the attribute is " << attr << endl;
 	return;
 }
+*/

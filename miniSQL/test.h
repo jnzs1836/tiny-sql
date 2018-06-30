@@ -20,6 +20,7 @@ void createCatalog(string name, vector<singleAttr> sa);
 attrNode callCatalog(string name);
 void giveIndex(string name, int num);
 //¼ÙµÄIndexManager
+/*
 class IndexManager {
 public:
 	void setName(string str, string attr);
@@ -45,5 +46,5 @@ public:
 		return ret;
 	};
 };
-
+*/
 #endif

@@ -31,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="API.cpp" />
+    <ClCompile Include="index_manager.cpp" />
     <ClCompile Include="interpreter.cpp" />
     <ClCompile Include="recordManager.cpp" />
     <ClCompile Include="test.cpp" />
@@ -126,7 +127,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>

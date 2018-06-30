@@ -10,7 +10,7 @@ namespace IndexManager {
     class Logger{
     public:
         void info(std::string msg){
-            std::cout << msg << std::endl;
+            //std::cout << msg << std::endl;
         }
 
     };
