@@ -37,7 +37,7 @@
 #define TO_SMALLER_NOT_INCLUDE 9
 #define TO_GREATER_INCLUDE 8
 #define TO_SMALLER_INCLUDE 7
-#define MY_CHAR_TYPE_SIZE 80
+#define MY_CHAR_TYPE_SIZE 255
 #define MAX_NODE_NUM 100
 
 //typedef struct IndexManager::
@@ -59,8 +59,28 @@ namespace IndexManager {
                 }
             }
             return flag;
-        }
-    } ;
+		};
+		bool operator<(const MyCharType b) const {
+			auto myString = std::string(data);
+			auto bString = std::string(b.data);
+			return myString < bString;
+		};
+		bool operator>(const MyCharType b) const {
+			auto myString = std::string(data);
+			auto bString = std::string(b.data);
+			return myString > bString;
+		};
+		bool operator<=(const MyCharType b) const {
+			auto myString = std::string(data);
+			auto bString = std::string(b.data);
+			return myString <= bString;
+		};
+		bool operator>=(const MyCharType b) const {
+			auto myString = std::string(data);
+			auto bString = std::string(b.data);
+			return myString >= bString;
+		};
+	} ;
     typedef struct {
         bool used[MAX_NODE_NUM];
     } NodeMemoryTable;
@@ -489,7 +509,9 @@ namespace IndexManager {
 
     template <class T, class KeyType>
     void BPlusTree<T, KeyType>::clearNode(addressType address){
-
+		metaData.nodeMemoryTable[address] = false;
+		metaData.num--;
+		memcpy(memoryAddress, metaData, sizeof(MetaData));
     };
 
 
