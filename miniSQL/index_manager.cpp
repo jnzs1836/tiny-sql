@@ -95,6 +95,24 @@ namespace IndexManager {
 		
 		
 	}
+	int IndexManager::dropIndex(std::string name) {
+		if (filename == name) {
+			filename = "tmp";
+		}
+		std::string prefix = "./";
+		std::string endfix = ".index";
+		std::string tmp = prefix + name + endfix;
+		char fileChar[255];
+		strcpy(fileChar, tmp.c_str());
+		int get = remove(fileChar);
+		if (get < 0) {
+			return 0;
+		}
+		else {
+			return 1;
+		}
+
+	}
 
 	int IndexManager::Insert(int key, addressType data) {
 		IntKey keyStructureInt;
@@ -121,7 +139,7 @@ namespace IndexManager {
 
 	int IndexManager::Insert(std::string key, addressType data) {
 		CharKey keyStructureChar;
-		keyStructureChar.key = 'r';
+		keyStructureChar.key = toMyCharType(key);
 		keyStructureChar.data = data;
 		return bPlusTreeChar->insert(keyStructureChar);
 	}
@@ -148,7 +166,7 @@ namespace IndexManager {
 	int IndexManager::Delete(std::string key) {
 
 		CharKey keyStructure;
-		keyStructure.key = 's';
+		keyStructure.key = toMyCharType(key);
 		keyStructure.data = 0;
 		return bPlusTreeChar->remove(keyStructure);
 		
@@ -172,7 +190,7 @@ namespace IndexManager {
 
 	std::vector<addressType> IndexManager::Search(std::string key, int searchType) {
 		CharKey keyStructure;
-		keyStructure.key = 'a';
+		keyStructure.key = toMyCharType(key);
 		keyStructure.data = 0;
 		keyStructure.type = searchType;
 		return bPlusTreeChar->searchNodes(keyStructure);
@@ -207,6 +225,12 @@ namespace IndexManager {
 		}
 		fout.close();
 		return 1;
+	}
+
+	MyCharType IndexManager::toMyCharType(std::string s) {
+		MyCharType my;
+		strcpy(my.data, s.c_str());
+		return my;
 	}
 
 }

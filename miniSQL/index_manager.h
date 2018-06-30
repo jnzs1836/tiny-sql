@@ -26,7 +26,9 @@ namespace IndexManager{
     public:
         IndexManager();
         ~IndexManager();
-        int createIndex(std::string name, rua type);
+		int createIndex(std::string name, rua type);
+		int dropIndex(std::string name);
+		MyCharType toMyCharType(std::string s);
         void setName(std::string name, std::string attr);
         //void deleteMany();
         int Delete(int key);

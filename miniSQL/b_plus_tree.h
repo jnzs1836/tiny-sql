@@ -44,6 +44,8 @@
 typedef int addressType;
 namespace IndexManager {
 
+	
+
 
     struct MyCharType{
         char data[MY_CHAR_TYPE_SIZE];
@@ -81,6 +83,8 @@ namespace IndexManager {
 			return myString >= bString;
 		};
 	} ;
+
+	
     typedef struct {
         bool used[MAX_NODE_NUM];
     } NodeMemoryTable;
@@ -114,7 +118,7 @@ namespace IndexManager {
     } BPlusNodeInt;
     typedef struct
     {
-        int key[MAX_CHAR + 1];       //key value
+        MyCharType key[MAX_CHAR + 1];       //key value
         int pointers[MAX_CHAR + 2]; //in interior node it ponit to the child node
         //in leaf node, the low 12 bit is the offset number
         //              the high 20 bit is the block number
@@ -134,7 +138,7 @@ namespace IndexManager {
     } BPlusNodeFloat;
 
     typedef struct {
-        char key;
+        MyCharType key;
         int data;
         int type;
     } CharKey;
@@ -509,9 +513,10 @@ namespace IndexManager {
 
     template <class T, class KeyType>
     void BPlusTree<T, KeyType>::clearNode(addressType address){
-		metaData.nodeMemoryTable[address] = false;
+	
+		metaData.nodeMemoryTable.used[address] = false;
 		metaData.num--;
-		memcpy(memoryAddress, metaData, sizeof(MetaData));
+		memcpy(memoryAddress, &metaData, sizeof(MetaData));
     };
 
 
