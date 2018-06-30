@@ -69,29 +69,40 @@ namespace IndexManager {
 	}
 
 	int IndexManager::createIndex(std::string name, rua type) {
-		saveIndexFileCatalog(name, name + ".index");
-		bPlusTreeType = type;
-		currentType = type;
-		switch (type) {
-		case INT:
-			bPlusTreeInt = new BPlusTree<BPlusNodeInt, IntKey>(currentMemory);
-			break;
-		case CHAR:
-			bPlusTreeChar = new BPlusTree<BPlusNodeChar, CharKey>(currentMemory);
-			break;
-		case FLOAT:
-			bPlusTreeFloat = new BPlusTree<BPlusNodeFloat, FloatKey>(currentMemory);
-			break;
+		std::ifstream fin;
+		std::string prefix = "./";
+		std::string endfix = ".index";
+		fin.open(prefix + file + endfix, std::ifstream::binary);
+		if (!fin) {
+			saveIndexFileCatalog(name, name + ".index");
+			bPlusTreeType = type;
+			currentType = type;
+			switch (type) {
+			case INT:
+				bPlusTreeInt = new BPlusTree<BPlusNodeInt, IntKey>(currentMemory);
+				break;
+			case CHAR:
+				bPlusTreeChar = new BPlusTree<BPlusNodeChar, CharKey>(currentMemory);
+				break;
+			case FLOAT:
+				bPlusTreeFloat = new BPlusTree<BPlusNodeFloat, FloatKey>(currentMemory);
+				break;
+			}
+			MetaData metaData;
+			metaData.rootPosition = 0;
+			metaData.num = 0;
+			for (int i = 0; i < MAX_NODE_NUM; i++) {
+				metaData.nodeMemoryTable.used[i] = false;
+			}
+			void *tmp = malloc(INDEX_BLOCK_SIZE);
+			memcpy(tmp, &metaData, sizeof(MetaData));
+			writeIndexFromMemory(name, tmp, INDEX_BLOCK_SIZE);
+			return 1;
 		}
-		MetaData metaData;
-		metaData.rootPosition = 0;
-		metaData.num = 0;
-		for (int i = 0; i < MAX_NODE_NUM; i++) {
-			metaData.nodeMemoryTable.used[i] = false;
+		else {
+			return 0;
 		}
-		void *tmp = malloc(INDEX_BLOCK_SIZE);
-		memcpy(tmp, &metaData, sizeof(MetaData));
-		return writeIndexFromMemory(name, tmp, INDEX_BLOCK_SIZE);
+		
 		
 		
 	}
@@ -221,7 +232,7 @@ namespace IndexManager {
 
 		fout.write((char *)memory, size);
 		if (!fout) {
-			return -1;
+			return 0;
 		}
 		fout.close();
 		return 1;
