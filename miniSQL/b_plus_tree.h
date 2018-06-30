@@ -1014,7 +1014,7 @@ namespace IndexManager {
         }else if(type == TO_SMALLER_INCLUDE){
             do{
                 for(int i = 0; i < currentNode.numOfKey; i++){
-                    found.push_back(currentNode.key[i]);
+                    found.push_back(currentNode.pointers[i]);
                 }
 //                currentNode = convertAddress(currentNode->prev);
             }while(!isEnd(&currentNode));
@@ -1022,7 +1022,7 @@ namespace IndexManager {
 //            currentNode = convertAddress(currentNode->prev);
             do{
                 for(int i = 0; i < currentNode.numOfKey; i++){
-                    found.push_back(currentNode.key[i]);
+                    found.push_back(currentNode.pointers[i]);
                 }
 //                currentNode = convertAddress(currentNode->prev);
             }while(!isEnd(&currentNode));

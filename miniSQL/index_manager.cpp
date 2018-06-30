@@ -72,7 +72,7 @@ namespace IndexManager {
 		std::ifstream fin;
 		std::string prefix = "./";
 		std::string endfix = ".index";
-		fin.open(prefix + file + endfix, std::ifstream::binary);
+		fin.open(prefix + name + endfix, std::ifstream::binary);
 		if (!fin) {
 			saveIndexFileCatalog(name, name + ".index");
 			bPlusTreeType = type;
