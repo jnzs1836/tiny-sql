@@ -3,8 +3,9 @@
 #include<iostream>
 #include<vector>
 #include<algorithm>
-void *memory = malloc(1000000);
+void *memory = malloc(INDEX_BLOCK_SIZE);
 bool exist = false;
+std::string filename = "tmp";
 namespace IndexManager {
 
 	IndexManager::IndexManager() {
@@ -49,6 +50,9 @@ namespace IndexManager {
 		bPlusTreeType = INT;
 		attrName = attr;
 		
+		writeIndexFromMemory(filename, memory, INDEX_BLOCK_SIZE);
+		filename = name;
+		readIndexToMemory(filename, memory, INDEX_BLOCK_SIZE);
 		
 		switch (currentType) {
 		case INT:
@@ -79,6 +83,17 @@ namespace IndexManager {
 			bPlusTreeFloat = new BPlusTree<BPlusNodeFloat, FloatKey>(currentMemory);
 			break;
 		}
+		MetaData metaData;
+		metaData.rootPosition = 0;
+		metaData.num = 0;
+		for (int i = 0; i < MAX_NODE_NUM; i++) {
+			metaData.nodeMemoryTable.used[i] = false;
+		}
+		void *tmp = malloc(INDEX_BLOCK_SIZE);
+		memcpy(tmp, &metaData, sizeof(MetaData));
+		return writeIndexFromMemory(name, tmp, INDEX_BLOCK_SIZE);
+		
+		
 	}
 
 	int IndexManager::Insert(int key, addressType data) {
@@ -165,6 +180,33 @@ namespace IndexManager {
 
 	void IndexManager::saveIndexFileCatalog(std::string indexName, std::string indexFile) {
 		;
+	}
+
+	int IndexManager::readIndexToMemory(std::string file, void* memory, int size) {
+		std::ifstream fin;
+		std::string prefix = "./";
+		std::string endfix = ".index";
+		fin.open(prefix+file+endfix, std::ifstream::binary);
+		if (!fin) {
+			return 0;
+		}
+		fin.read((char*)memory, size);
+		fin.close();
+		return 1;
+	}
+
+	int IndexManager::writeIndexFromMemory(std::string file, void* memory, int size) {
+		std::string prefix = "./";
+		std::ofstream fout;
+		std::string endfix = ".index";
+		fout.open(prefix+file+endfix, std::ofstream::binary);
+
+		fout.write((char *)memory, size);
+		if (!fout) {
+			return -1;
+		}
+		fout.close();
+		return 1;
 	}
 
 }

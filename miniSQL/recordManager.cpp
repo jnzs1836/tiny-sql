@@ -527,8 +527,7 @@ int recordManager::selectFrom(string name, vector<where> w)
 //创建index
 void recordManager::createIndex(string name, string attr)
 {
-	//设置当前表
-	im.setName(name, attr);
+	
 	
 	//开始创建
 	dat *block = getBlock(1, name);
@@ -551,7 +550,10 @@ void recordManager::createIndex(string name, string attr)
 		cout << "ERROR: index on a not unique attribute.\n";
 		return;
 	}
-
+	
+	im.createIndex(name + attr, atr.ad.type[num]);
+	//设置当前表
+	im.setName(name, attr);
 	while (address <= finalTP) {
 		switch (atr.ad.type[num]) {
 		case INT:

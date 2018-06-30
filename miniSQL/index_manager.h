@@ -9,6 +9,7 @@
 #include <iostream>
 #include "type.h"
 #include "b_plus_tree.h"
+#define INDEX_BLOCK_SIZE 1000000
 namespace CatalogManager {
     class CatalogManager{
         std::string getFileName(std::string);
@@ -39,6 +40,8 @@ namespace IndexManager{
 		std::vector<addressType> Search(std::string key, int searchType);
 
     private:
+		int readIndexToMemory(std::string file,void* memory, int size);
+		int writeIndexFromMemory(std::string file, void* memory, int size);
 		void *currentMemory;
 		rua bPlusTreeType;
 		std::string attrName;
